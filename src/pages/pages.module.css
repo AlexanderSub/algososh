@@ -1,0 +1,15 @@
+.input {
+  display: flex;
+  gap: 12px;
+}
+
+.output {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.wrapper {
+  display: flex;
+  gap: 12px;
+}
