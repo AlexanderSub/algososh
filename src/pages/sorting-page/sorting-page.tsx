@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button/button";
+import { Circle } from "../../components/ui/circle/circle";
 import { RadioInput } from "../../components/ui/radio-input/radio-input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
+import { delay, swap } from "../../components/utils/utils";
+import { DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { TArrayNumber } from "../../types/types";
 import PagesStyles from '../pages.module.css'
 
 export const SortingPage: React.FC = () => {
   const [loading, setLoading] = useState(false)
-  const [sorting, setSorting] = useState('select')
+  const [sortType, setSortType] = useState('select')
   const [array, setArray] = useState<TArrayNumber[]>([])
-  const [ascending, setAscending] = useState(false);
-  const [descending, setDescending] = useState(false);
+  const [sortDirection, setSortDirection] = useState('');
 
   const generateArray = () => {
     const randomSize = (max: number, min: number) => Math.floor (Math.random () * (max - min + 1)) + min
@@ -31,11 +33,36 @@ export const SortingPage: React.FC = () => {
     generateArray()
   }, [])
 
-  const selectionSort = () => {
+  const selectionSort = async (type: string) => {
+    setLoading(true)
+    setSortDirection(type)
 
-  }
+    const arrayToSort = [...array]
 
-  const bubbleSort = () => {
+    console.log(arrayToSort)
+
+    const { length } = arrayToSort;
+    for (let i = 0; i < length - 1; i++) {
+      let maxInd = i;
+      for (let j = i+1; j < length; j++) {
+        arrayToSort[j].state = ElementStates.Changing
+        arrayToSort[j + 1].state = ElementStates.Changing
+        setArray([...arrayToSort])
+        await delay(DELAY_IN_MS)
+        if ((sortDirection === 'descending' && arrayToSort[j] > arrayToSort[maxInd]) || (sortDirection === 'ascending' && arrayToSort[j] < arrayToSort[maxInd])) {
+          maxInd = j
+        }
+        arrayToSort[j].state = ElementStates.Default
+        setArray([...arrayToSort])
+      }
+      swap(arrayToSort, i, maxInd)
+      arrayToSort[i].state = ElementStates.Modified
+    }
+    setLoading(false)
+    setSortDirection('')
+  };
+
+  const bubbleSort = (type: string) => {
     
   }
 
@@ -45,28 +72,28 @@ export const SortingPage: React.FC = () => {
         <RadioInput 
           label="Выбор"
           disabled={loading}
-          checked={sorting === 'select'}
-          onChange={() => setSorting('select')}
+          checked={sortType === 'select'}
+          onChange={() => setSortType('select')}
         />
         <RadioInput 
           label="Пузырёк"
           disabled={loading}
-          checked={sorting === 'bubble'}
-          onChange={() => setSorting('bubble')}
+          checked={sortType === 'bubble'}
+          onChange={() => setSortType('bubble')}
         />
         <Button
           type='submit'
           text='По возрастанию'
-          isLoader={ascending}
+          isLoader={sortDirection === 'ascending'}
           disabled={loading}
-          onClick={() => sorting === 'select' ? selectionSort('ascending') : bubbleSort('ascending')} 
+          onClick={() => sortType === 'select' ? selectionSort('ascending') : bubbleSort('ascending')} 
         />
         <Button
           type='submit'
           text='По убыванию'
-          isLoader={descending}
+          isLoader={sortDirection === 'descending'}
           disabled={loading}
-          onClick={() => sorting === 'select' ? selectionSort('descending') : bubbleSort('descending')} 
+          onClick={() => sortType === 'select' ? selectionSort('descending') : bubbleSort('descending')} 
         />
         <Button
           type='submit'
@@ -76,9 +103,15 @@ export const SortingPage: React.FC = () => {
           onClick={() => generateArray()} 
         />
       </div>
-      <ul>
-
-      </ul>
+     <ul className={PagesStyles.output}>
+      {
+        array.map((number, index) => {
+          return (
+            <Circle key={index} letter={number.value.toString()} />
+          )
+        })
+      }
+     </ul>
     </SolutionLayout>
   );
 };
