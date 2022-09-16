@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button/button";
 import { Circle } from "../../components/ui/circle/circle";
+import { Column } from "../../components/ui/column/column";
 import { RadioInput } from "../../components/ui/radio-input/radio-input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
 import { delay, swap } from "../../components/utils/utils";
@@ -107,7 +108,7 @@ export const SortingPage: React.FC = () => {
       {
         array.map((number, index) => {
           return (
-            <Circle key={index} letter={number.value.toString()} />
+            <Column key={index} index={number.value} />
           )
         })
       }
