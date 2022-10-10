@@ -6,6 +6,7 @@
 .output {
   display: flex;
   justify-content: center;
+  align-items: flex-end;
   gap: 16px;
 }
 
