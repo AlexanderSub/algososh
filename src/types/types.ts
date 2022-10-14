@@ -9,3 +9,8 @@ export type TArrayNumber = {
   value: number;
   state: ElementStates;  
 }
+
+export enum Direction {
+  Ascending = "ascending",
+  Descending = "descending",
+}

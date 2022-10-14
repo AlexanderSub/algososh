@@ -4,47 +4,70 @@ import { Column } from "../../components/ui/column/column";
 import { RadioInput } from "../../components/ui/radio-input/radio-input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
 import { delay, swap } from "../../components/utils/utils";
-import { DELAY_IN_MS } from "../../constants/delays";
-import { Direction } from "../../types/direction";
+import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
-import { TArrayNumber } from "../../types/types";
+import { Direction, TArrayNumber } from "../../types/types";
 import PagesStyles from '../pages.module.css'
 import { SortType, Step } from "./types";
-import { getRandomArray } from "./utils";
+import { bubbleSort, selectionSort, getColumnState, getRandomArray } from "./utils";
 
 export const SortingPage: React.FC = () => {
-  const [sortType, setSortType] = useState<SortType>(SortType.Bubble)
-  const [array, setArray] = useState<TArrayNumber[]>([])
+  const [sortType, setSortType] = useState<SortType>()
   const [sortDirection, setSortDirection] = useState<Direction>()
+  const [loading, setLoading] = useState(false)
+
+  const [array, setArray] = useState<TArrayNumber[]>([])
+  
   
   const randomArray = useRef<number[]>(getRandomArray())
-  const [steps, setSteps] = useState<Step[]>([{
+  const [algorithmSteps, setAlgorithmSteps] = useState<Step[]>([{
     currentArray: randomArray.current,
     sortedIndexes: []
   }])
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentAlgorithmStep, setCurrentAlgorithmStep] = useState(0)
 
-  const isAlgorithmInProgress = currentStep < steps.length - 1
+  const timer = useRef<NodeJS.Timeout>()
 
   const generateArray = () => {
     randomArray.current = getRandomArray()
-    setSteps([{
+    setAlgorithmSteps([{
       currentArray: randomArray.current,
       sortedIndexes: []
     }])
-    setCurrentStep(0)
+    setCurrentAlgorithmStep(0)
   }
-
 
   useEffect(() => {
     generateArray()
   }, [])
 
-  const makeSort = (sortDirection: Direction) => {
-    
+  // const makeSort = (sortDirection: Direction) => {
+  //   const steps = getBubbleSortSteps(randomArray.current, sortDirection)
+  //   setAlgorithmSteps(steps)
+
+  //   timer.current = setInterval(() => {
+  //     if (steps.length > 0) {
+  //       setCurrentAlgorithmStep((currentStep) => {
+  //         const nextStep = currentStep + 1
+
+  //         if (nextStep > steps.length - 1 && timer.current) {
+  //           clearInterval(timer.current)
+
+  //           return currentStep
+  //         }
+
+  //         return nextStep
+  //       })
+  //     }
+  //   }, SHORT_DELAY_IN_MS)
+  // }
+
+  const handleClick = (direction: Direction) => {
+    setSortDirection(direction)
+    sortType === SortType.Bubble ? bubbleSort(randomArray.current, direction) : selectionSort(randomArray.current, direction)
   }
 
-  const selectionSort = async (type: string) => {
+  // const selectionSort = async (type: string) => {
     // setLoading(true)
     // setSortDirection(type)
 
@@ -71,54 +94,61 @@ export const SortingPage: React.FC = () => {
     // }
     // setLoading(false)
     // setSortDirection('')
-  };
+  // };
 
-  const bubbleSort = (type: string) => {
-    
-  }
-
+ 
   return (
     <SolutionLayout title="Сортировка массива">
       <div className={PagesStyles.wrapper}>
-        <RadioInput 
-          label="Выбор"
-          disabled={isAlgorithmInProgress}
-          checked={sortType === SortType.Select}
-          onChange={() => setSortType(SortType.Select)}
-        />
-        <RadioInput 
-          label="Пузырёк"
-          disabled={isAlgorithmInProgress}
-          checked={sortType === SortType.Bubble}
-          onChange={() => setSortType(SortType.Bubble)}
-        />
-        <Button
-          type='submit'
-          text='По возрастанию'
-          isLoader={sortDirection === 'ascending'}
-          disabled={isAlgorithmInProgress}
-          onClick={() => sortType === 'select' ? selectionSort('ascending') : bubbleSort('ascending')} 
-        />
-        <Button
-          type='submit'
-          text='По убыванию'
-          isLoader={sortDirection === 'descending'}
-          disabled={isAlgorithmInProgress}
-          onClick={() => sortType === 'select' ? selectionSort('descending') : bubbleSort('descending')} 
-        />
+        <div className={PagesStyles.radioButtons}>
+          <RadioInput 
+            label="Выбор"
+            disabled={loading}
+            checked={sortType === SortType.Select}
+            onChange={() => setSortType(SortType.Select)}
+          />
+          <RadioInput 
+            label="Пузырёк"
+            disabled={loading}
+            checked={sortType === SortType.Bubble}
+            onChange={() => setSortType(SortType.Bubble)}
+          />
+        </div>
+        <div className={PagesStyles.directionButtons}>
+          <Button
+            type='submit'
+            sorting={Direction.Ascending}
+            text='По возрастанию'
+            isLoader={sortDirection === Direction.Ascending && loading}
+            disabled={sortDirection !== Direction.Ascending && loading}
+            onClick={() => handleClick(Direction.Ascending)} 
+          />
+          <Button
+            type='submit'
+            sorting={Direction.Descending}
+            text='По убыванию'
+            isLoader={sortDirection === Direction.Descending && loading}
+            disabled={sortDirection !== Direction.Descending && loading}
+            onClick={() => handleClick(Direction.Descending)} 
+          />
+        </div>
+
         <Button
           type='submit'
           text='Новый массив'
-          isLoader={false}
-          disabled={isAlgorithmInProgress}
-          onClick={() => generateArray()} 
+          disabled={loading}
+          onClick={() => generateArray()}
         />
       </div>
      <ul className={PagesStyles.output}>
-      {
-        array.map((number, index) => {
+      { algorithmSteps.length &&
+        algorithmSteps[currentAlgorithmStep].currentArray.map((currentNumber, index) => {
           return (
-            <Column key={index} index={number.value} />
+            <Column 
+              key={index} 
+              index={currentNumber}
+              state={getColumnState(index, currentAlgorithmStep >= algorithmSteps.length - 1, algorithmSteps[currentAlgorithmStep])}
+            />
           )
         })
       }
