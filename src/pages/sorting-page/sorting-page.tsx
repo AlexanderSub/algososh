@@ -1,102 +1,90 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button/button";
 import { Column } from "../../components/ui/column/column";
 import { RadioInput } from "../../components/ui/radio-input/radio-input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
 import { delay, swap } from "../../components/utils/utils";
-import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
-import { Direction, TArrayNumber } from "../../types/types";
+import { Direction, SortType, TArrayNumber } from "../../types/types";
 import PagesStyles from '../pages.module.css'
-import { SortType, Step } from "./types";
-import { bubbleSort, selectionSort, getColumnState, getRandomArray } from "./utils";
 
 export const SortingPage: React.FC = () => {
-  const [sortType, setSortType] = useState<SortType>()
+  const [sortType, setSortType] = useState<SortType>(SortType.Select)
   const [sortDirection, setSortDirection] = useState<Direction>()
   const [loading, setLoading] = useState(false)
-
   const [array, setArray] = useState<TArrayNumber[]>([])
-  
-  
-  const randomArray = useRef<number[]>(getRandomArray())
-  const [algorithmSteps, setAlgorithmSteps] = useState<Step[]>([{
-    currentArray: randomArray.current,
-    sortedIndexes: []
-  }])
-  const [currentAlgorithmStep, setCurrentAlgorithmStep] = useState(0)
-
-  const timer = useRef<NodeJS.Timeout>()
+ 
+  useEffect(() => {
+    generateArray();
+  }, []);
 
   const generateArray = () => {
-    randomArray.current = getRandomArray()
-    setAlgorithmSteps([{
-      currentArray: randomArray.current,
-      sortedIndexes: []
-    }])
-    setCurrentAlgorithmStep(0)
+    const size = Math.random() * (17 - 3) + 3;
+    const arr: TArrayNumber[] = [];
+    for (let i = 0; i < size; i++) {
+      arr.push({
+        value: Math.floor(Math.random() * 100) + 1,
+        state: ElementStates.Default,
+      });
+    }
+    setArray([...arr]);
+  };
+
+// Сортировка пузырьком
+const bubbleSort = async (arr: TArrayNumber[], direction: Direction) => {
+  setLoading(true)
+
+  const { length } = arr
+  for (let i = 0; i < length; i++) {
+    for (let j = 0; j < length - i - 1; j++) {
+      arr[j].state = ElementStates.Changing
+      arr[j + 1].state = ElementStates.Changing
+      setArray([...arr])
+      await delay(SHORT_DELAY_IN_MS)
+      if ((direction === 'ascending' && arr[j].value > arr[j + 1].value) || (direction === 'descending' && arr[j].value < arr[j + 1].value)) {
+        swap(arr, j, j + 1)
+      }
+      arr[j].state = ElementStates.Default
+    }
+    arr[arr.length - i - 1].state = ElementStates.Modified
   }
+  setLoading(false)
+  setSortDirection(undefined)
+}
 
-  useEffect(() => {
-    generateArray()
-  }, [])
+// Сортировка выбором
+const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
+  setLoading(true)
+  
+  const { length } = arr
+  for (let i = 0; i < length - 1; i++) {
+    let maxInd = i;
+    for (let j = i + 1; j < length; j++) {
+      arr[i].state = ElementStates.Changing
+      arr[j].state = ElementStates.Changing
+      setArray([...arr])
+      await delay(SHORT_DELAY_IN_MS)
+      if ((direction === 'descending' && arr[j].value > arr[maxInd].value) || (direction === 'ascending' && arr[j].value < arr[maxInd].value)) {
+        maxInd = j
+      }
+      arr[j].state = ElementStates.Default
+      setArray([...arr])
+    }
+    swap(arr, i, maxInd)
+    arr[i].state = ElementStates.Modified
+  }
+  arr[arr.length - 1].state = ElementStates.Modified
 
-  // const makeSort = (sortDirection: Direction) => {
-  //   const steps = getBubbleSortSteps(randomArray.current, sortDirection)
-  //   setAlgorithmSteps(steps)
-
-  //   timer.current = setInterval(() => {
-  //     if (steps.length > 0) {
-  //       setCurrentAlgorithmStep((currentStep) => {
-  //         const nextStep = currentStep + 1
-
-  //         if (nextStep > steps.length - 1 && timer.current) {
-  //           clearInterval(timer.current)
-
-  //           return currentStep
-  //         }
-
-  //         return nextStep
-  //       })
-  //     }
-  //   }, SHORT_DELAY_IN_MS)
-  // }
+  setLoading(false)
+  setSortDirection(undefined)
+};
 
   const handleClick = (direction: Direction) => {
     setSortDirection(direction)
-    sortType === SortType.Bubble ? bubbleSort(randomArray.current, direction) : selectionSort(randomArray.current, direction)
+    sortType === SortType.Bubble ? bubbleSort(array, direction) : selectionSort(array, direction)
   }
 
-  // const selectionSort = async (type: string) => {
-    // setLoading(true)
-    // setSortDirection(type)
-
-    // const arrayToSort = [...array]
-
-    // console.log(arrayToSort)
-
-    // const { length } = arrayToSort;
-    // for (let i = 0; i < length - 1; i++) {
-    //   let maxInd = i;
-    //   for (let j = i+1; j < length; j++) {
-    //     arrayToSort[j].state = ElementStates.Changing
-    //     arrayToSort[j + 1].state = ElementStates.Changing
-    //     setArray([...arrayToSort])
-    //     await delay(DELAY_IN_MS)
-    //     if ((sortDirection === 'descending' && arrayToSort[j] > arrayToSort[maxInd]) || (sortDirection === 'ascending' && arrayToSort[j] < arrayToSort[maxInd])) {
-    //       maxInd = j
-    //     }
-    //     arrayToSort[j].state = ElementStates.Default
-    //     setArray([...arrayToSort])
-    //   }
-    //   swap(arrayToSort, i, maxInd)
-    //   arrayToSort[i].state = ElementStates.Modified
-    // }
-    // setLoading(false)
-    // setSortDirection('')
-  // };
-
- 
   return (
     <SolutionLayout title="Сортировка массива">
       <div className={PagesStyles.wrapper}>
@@ -141,13 +129,12 @@ export const SortingPage: React.FC = () => {
         />
       </div>
      <ul className={PagesStyles.output}>
-      { algorithmSteps.length &&
-        algorithmSteps[currentAlgorithmStep].currentArray.map((currentNumber, index) => {
+      { array.map((item, index) => {
           return (
             <Column 
               key={index} 
-              index={currentNumber}
-              state={getColumnState(index, currentAlgorithmStep >= algorithmSteps.length - 1, algorithmSteps[currentAlgorithmStep])}
+              index={item.value}
+              state={item.state}
             />
           )
         })

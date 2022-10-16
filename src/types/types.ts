@@ -14,3 +14,8 @@ export enum Direction {
   Ascending = "ascending",
   Descending = "descending",
 }
+
+export enum SortType {
+  Select = 'select',
+  Bubble = 'bubble'
+}
