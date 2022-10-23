@@ -18,7 +18,7 @@ export const StackPage: React.FC = () => {
   const [input, setInput] = useState<string>('')
   const [count, setCount] = useState<number>(0)
   const [stack] = useState(new Stack<string>())
-  const [disableDelete, setDisableDelete] = useState(false) // Чтобы нельзя деактивировать кнопку на период удаления элемента
+  const [disableDelete, setDisableDelete] = useState(false)
 
   const push = async (item: string) => {
     stack.push(item)
