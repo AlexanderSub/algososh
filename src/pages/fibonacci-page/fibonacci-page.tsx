@@ -37,33 +37,36 @@ export const FibonacciPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
-      <div className={PagesStyles.input}>
-        <Input
-          onChange={onChange}
-          value={inputValue}
-          min={1}
-          max={19}
-          disabled={loading}
-          isLimitText={true}
-          type='number'
-        />
-        <Button
-          type='submit'
-          text='Рассчитать'
-          isLoader={loading}
-          disabled={!inputValue}
-          onClick={() => getFibonacciNumbers(inputValue as number)}
-        />
+      <div className={PagesStyles.content}>
+        <div className={`${PagesStyles.input} ${PagesStyles.mb48}`}>
+          <Input
+            onChange={onChange}
+            value={inputValue}
+            min={1}
+            max={19}
+            disabled={loading}
+            isLimitText={true}
+            type='number'
+            extraClass={PagesStyles.inputWidth}
+          />
+          <Button
+            type='submit'
+            text='Рассчитать'
+            isLoader={loading}
+            disabled={!inputValue}
+            onClick={() => getFibonacciNumbers(inputValue as number)}
+          />
+        </div>
+        <div className={PagesStyles.output}>
+          {
+            numbers.map((number, index) => {
+              return (
+                <Circle key={index} letter={number.toString()} />
+              )
+            })
+          }
+        </div>
       </div>
-      <ul className={PagesStyles.output}>
-        {
-          numbers.map((number, index) => {
-            return (
-              <Circle key={index} letter={number.toString()} />
-            )
-          })
-        }
-      </ul>
     </SolutionLayout>
   );
 };

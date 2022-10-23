@@ -58,31 +58,34 @@ export const StringPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Строка">
-     <div className={PagesStyles.input}>
-      <Input
-        onChange={onChange}
-        value={inputValue}
-        maxLength={11}
-        disabled={loading}
-        isLimitText={true}
-      />
-      <Button
-        type='submit'
-        text='Развернуть'
-        isLoader={loading}
-        disabled={!inputValue}
-        onClick={handleSubmit} 
-      />
-     </div>
-     <ul className={PagesStyles.output}>
-      {
-        string.map((letter, index) => {
-          return (
-            <Circle key={index} state={letter.state} letter={letter.value} />
-          )
-        })
-      }
-     </ul>
+      <div className={PagesStyles.content}>
+        <div className={`${PagesStyles.input} ${PagesStyles.mb120}`}>
+          <Input
+            onChange={onChange}
+            value={inputValue}
+            maxLength={11}
+            disabled={loading}
+            isLimitText={true}
+            extraClass={PagesStyles.inputWidth}
+          />
+          <Button
+            type='submit'
+            text='Развернуть'
+            isLoader={loading}
+            disabled={!inputValue}
+            onClick={handleSubmit} 
+          />
+        </div>
+        <div className={PagesStyles.output}>
+          {
+            string.map((letter, index) => {
+              return (
+                <Circle key={index} state={letter.state} letter={letter.value} />
+              )
+            })
+          }
+        </div>
+      </div>
     </SolutionLayout>
   )
 }

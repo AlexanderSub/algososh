@@ -88,21 +88,21 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
   return (
     <SolutionLayout title="Сортировка массива">
       <div className={PagesStyles.wrapper}>
-        <div className={PagesStyles.radioButtons}>
-          <RadioInput 
-            label="Выбор"
-            disabled={loading}
-            checked={sortType === SortType.Select}
-            onChange={() => setSortType(SortType.Select)}
-          />
-          <RadioInput 
-            label="Пузырёк"
-            disabled={loading}
-            checked={sortType === SortType.Bubble}
-            onChange={() => setSortType(SortType.Bubble)}
-          />
-        </div>
-        <div className={PagesStyles.directionButtons}>
+        <div className={`${PagesStyles.input} ${PagesStyles.mb48}`}>
+          <div className={PagesStyles.radioButtons}>
+            <RadioInput 
+              label="Выбор"
+              disabled={loading}
+              checked={sortType === SortType.Select}
+              onChange={() => setSortType(SortType.Select)}
+            />
+            <RadioInput 
+              label="Пузырёк"
+              disabled={loading}
+              checked={sortType === SortType.Bubble}
+              onChange={() => setSortType(SortType.Bubble)}
+            />
+          </div>
           <Button
             type='submit'
             sorting={Direction.Ascending}
@@ -119,27 +119,28 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
             disabled={sortDirection !== Direction.Descending && loading}
             onClick={() => handleClick(Direction.Descending)} 
           />
+          <Button
+            type='submit'
+            text='Новый массив'
+            disabled={loading}
+            onClick={() => generateArray()}
+            extraClass={PagesStyles.lastButton}
+          />
         </div>
-
-        <Button
-          type='submit'
-          text='Новый массив'
-          disabled={loading}
-          onClick={() => generateArray()}
-        />
-      </div>
-     <ul className={PagesStyles.output}>
-      { array.map((item, index) => {
-          return (
-            <Column 
-              key={index} 
-              index={item.value}
-              state={item.state}
-            />
-          )
-        })
-      }
-     </ul>
+      
+        <div className={PagesStyles.output}>
+          { array.map((item, index) => {
+              return (
+                <Column 
+                  key={index} 
+                  index={item.value}
+                  state={item.state}
+                />
+              )
+            })
+          }
+        </div>
+     </div>
     </SolutionLayout>
   );
 };
