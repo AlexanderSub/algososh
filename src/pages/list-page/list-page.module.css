@@ -3,7 +3,7 @@
   display: grid;
   margin: 0 auto;
   gap: 12px;
-  outline: 1px solid red;
+
 }
 
 .inputValue {
@@ -44,4 +44,14 @@
 .buttonDeleteByIndex {
   grid-row: 2/3;
   grid-column: 4/6;
+}
+
+.output {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+  grid-row: 3/4;
+  grid-column: 1/6;
+  justify-content: center;
 }

@@ -1,10 +1,10 @@
-import React, { ChangeEvent, SetStateAction, useState } from "react";
+import React, { ChangeEvent, SetStateAction, useEffect, useState } from "react";
 import { Button } from "../../components/ui/button/button";
 import { Circle } from "../../components/ui/circle/circle";
 import { Input } from "../../components/ui/input/input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
 import { ElementStates } from "../../types/element-states";
-import PagesStyles from '../pages.module.css'
+import { TListState } from "../../types/types";
 import { LinkedList } from "./LinkedList";
 import ListPageStyles from './list-page.module.css'
 
@@ -13,9 +13,10 @@ export const ListPage: React.FC = () => {
     setInput((e.target as HTMLInputElement).value)
   }
 
-  const initialArray = Array.from({length: 4}, () => Math.floor(Math.random() * 100));
-
+  const initialArray = Array.from({length: 4}, () => Math.floor(Math.random() * 100)).map(item => item.toString());
+  
   const [list] = useState(new LinkedList(initialArray))
+  const [listState, setListState] = useState<TListState<typeof input>[]>([])
   const [input, setInput] = useState<string>('')
   const [index, setIndex] = useState<string>('')
   const [addToHeadLoading, setAddToHeadLoading] = useState(false)
@@ -25,6 +26,27 @@ export const ListPage: React.FC = () => {
   const [addByIndexLoading, setAddByIndexLoading] = useState(false)
   const [deleteByIndexLoading, setDeleteByIndexLoading] = useState(false)
   const [element, setElement] = useState()
+  
+  const setState = () => {
+    const array: TListState<typeof input>[] = []
+    const circles = list.toArray()
+    for (let i = 0; i < circles.length; i++) {
+      array.push({
+        circle: circles[i],
+        smallCircle: '',
+        state: ElementStates.Default,
+        addProgress: false,
+        deleteProgress: false
+      })
+    }
+    return array
+  }
+
+  useEffect(() => {
+    setListState([...setState()])
+  }, [])
+
+  console.log(listState)
 
   const addToHead = () => {
 
@@ -97,17 +119,15 @@ export const ListPage: React.FC = () => {
           />
 
 
-        <div className={PagesStyles.output}>
-          {/* {symbols.map((item, index) => 
+        <div className={ListPageStyles.output}>
+          {listState.map((item, index) => 
             <Circle 
               key={index}
-              letter={item}
+              letter={item.circle}
               index={index}
-              state={index === count ? ElementStates.Changing : ElementStates.Default}
-              head={item && index === head ? "head" : ""}
-              tail={item === (tail).toString() ? "tail" : ""}
+
             />
-          )} */}
+          )}
         </div>
       </div>
     </SolutionLayout>
