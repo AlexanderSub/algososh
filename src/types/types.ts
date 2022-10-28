@@ -10,6 +10,14 @@ export type TArrayNumber = {
   state: ElementStates;  
 }
 
+export type TListState<T> = {
+  circle: T;
+  smallCircle: T;
+  state: ElementStates;
+  addProgress: boolean;
+  deleteProgress: boolean;
+}
+
 export enum Direction {
   Ascending = "ascending",
   Descending = "descending",
