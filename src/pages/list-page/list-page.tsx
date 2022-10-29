@@ -3,6 +3,8 @@ import { Button } from "../../components/ui/button/button";
 import { Circle } from "../../components/ui/circle/circle";
 import { Input } from "../../components/ui/input/input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
+import { delay } from "../../components/utils/utils";
+import { DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { TListState } from "../../types/types";
 import { LinkedList } from "./LinkedList";
@@ -46,87 +48,131 @@ export const ListPage: React.FC = () => {
     setListState([...setState()])
   }, [])
 
-  console.log(listState)
-
-  const addToHead = () => {
-
+  const addToHead = async (element: string) => {
+    setAddToHeadLoading(true)
+    listState[0].smallCircle = element
+    listState[0].addProgress = true
+    await delay(DELAY_IN_MS)
+    listState[0].smallCircle = ''
+    listState[0].addProgress = false
+    listState.unshift({
+      circle: element,
+      smallCircle: '',
+      state: ElementStates.Modified,
+      addProgress: false,
+      deleteProgress: false
+    })
+    await delay(DELAY_IN_MS)
+    listState[0].state = ElementStates.Default
+    list.prepend(element)
+    setInput('')
+    setAddToHeadLoading(false)
   }
 
-  const addToTail = () => {
-
+  const addToTail = async (element: string) => {
+    setAddToTailLoading(true)
+    listState[listState.length - 1].addProgress = true
+    listState[listState.length - 1].smallCircle = element
+    await delay(DELAY_IN_MS)
+    listState[listState.length - 1].addProgress = false
+    listState[listState.length - 1].smallCircle = ''
+    listState.push({
+      circle: element,
+      smallCircle: '',
+      state: ElementStates.Modified,
+      addProgress: false,
+      deleteProgress: false
+    })
+    await delay(DELAY_IN_MS)
+    listState[listState.length - 1].state = ElementStates.Default
+    list.append(element)
+    setInput('')
+    setAddToTailLoading(false)
   }
 
   
-
   return (
     <SolutionLayout title="Связный список">
       <div className={ListPageStyles.wrapper}>
-
-          <Input 
-            placeholder="Введите значение"
-            maxLength={4}
-            isLimitText
-            type="text"
-            value={input}
-            onChange={(e) => handleChange(e as ChangeEvent<HTMLInputElement>, setInput)}
-            // disabled={queue.getSize() === queue.getLength()}
-            extraClass={ListPageStyles.inputValue}
-          />
-          <Button 
-            text="Добавить в head"
-            // onClick={() => enqueue(input)}
-            disabled={!input}
-            extraClass={ListPageStyles.buttonAddToHead}
-          />
-          <Button 
-            text="Добавить в tail"
-            // onClick={() => dequeue()}
-            // disabled={!queue.getLength() || disableDelete}
-            extraClass={ListPageStyles.buttonAddToTail}
-          />
-          <Button 
-            text="Удалить из head"
-            // onClick={() => enqueue(input)}
-            disabled={!input}
-            extraClass={ListPageStyles.buttonDeleteFromHead}
-          />
-          <Button 
-            text="Удалить из tail"
-            // onClick={() => dequeue()}
-            // disabled={!queue.getLength() || disableDelete}
-            extraClass={ListPageStyles.buttonDeleteFromTail}
-          />
-
-          <Input 
-            placeholder="Введите индекс"
-            type="text"
-            value={input}
-            onChange={(e) => handleChange(e as ChangeEvent<HTMLInputElement>, setInput)}
-            // disabled={queue.getSize() === queue.getLength()}
-            extraClass={ListPageStyles.inputIndex}
-          />
-          <Button 
-            text="Добавить по индексу"
-            // onClick={() => enqueue(input)}
-            disabled={!input}
-            extraClass={ListPageStyles.buttonAddByIndex}
-          />
-          <Button 
-            text="Удалить по индексу"
-            // onClick={() => dequeue()}
-            // disabled={!queue.getLength() || disableDelete}
-            extraClass={ListPageStyles.buttonDeleteByIndex}
-          />
-
-
+        <Input 
+          placeholder="Введите значение"
+          maxLength={4}
+          isLimitText
+          type="text"
+          value={input}
+          onChange={(e) => handleChange(e as ChangeEvent<HTMLInputElement>, setInput)}
+          extraClass={ListPageStyles.inputValue}
+        />
+        <Button 
+          text="Добавить в head"
+          onClick={() => addToHead(input)}
+          disabled={!input || addToTailLoading}
+          isLoader={addToHeadLoading}
+          extraClass={ListPageStyles.buttonAddToHead}
+        />
+        <Button 
+          text="Добавить в tail"
+          onClick={() => addToTail(input)}
+          disabled={!input || addToHeadLoading}
+          isLoader={addToTailLoading}
+          extraClass={ListPageStyles.buttonAddToTail}
+        />
+        <Button 
+          text="Удалить из head"
+          // onClick={() => enqueue(input)}
+          // disabled={!input}
+          extraClass={ListPageStyles.buttonDeleteFromHead}
+        />
+        <Button 
+          text="Удалить из tail"
+          // onClick={() => dequeue()}
+          // disabled={!input}
+          extraClass={ListPageStyles.buttonDeleteFromTail}
+        />
+        <Input 
+          placeholder="Введите индекс"
+          type="text"
+          value={index}
+          onChange={(e) => handleChange(e as ChangeEvent<HTMLInputElement>, setIndex)}
+          // disabled={queue.getSize() === queue.getLength()}
+          extraClass={ListPageStyles.inputIndex}
+        />
+        <Button 
+          text="Добавить по индексу"
+          // onClick={() => enqueue(input)}
+          disabled={!input || !index}
+          extraClass={ListPageStyles.buttonAddByIndex}
+        />
+        <Button 
+          text="Удалить по индексу"
+          // onClick={() => dequeue()}
+          disabled={!index}
+          extraClass={ListPageStyles.buttonDeleteByIndex}
+        />
         <div className={ListPageStyles.output}>
           {listState.map((item, index) => 
-            <Circle 
-              key={index}
-              letter={item.circle}
-              index={index}
-
-            />
+            <div className={ListPageStyles.circlesWrapper}>
+              <Circle 
+                isSmall={true}
+                letter={item.smallCircle}
+                extraClass={item.addProgress && addToHeadLoading ? `${ListPageStyles.topCircle}` : `${ListPageStyles.topCircle} ${ListPageStyles.hidden}`}
+                state={ElementStates.Changing}
+              />
+              <Circle 
+                key={index}
+                letter={item.circle}
+                index={index}
+                extraClass={ListPageStyles.centralCircle}
+                head={addToHeadLoading ? '' : index === 0 ? "head" : null}
+                tail={addToTailLoading ? '' : list.getSize() - 1 === index ? "tail" : ''}
+              />
+              <Circle 
+                isSmall={true}
+                letter={item.smallCircle}
+                extraClass={item.addProgress && addToTailLoading ? `${ListPageStyles.bottomCircle}` : `${ListPageStyles.bottomCircle} ${ListPageStyles.hidden}`}
+                state={ElementStates.Changing}
+              />
+            </div>
           )}
         </div>
       </div>

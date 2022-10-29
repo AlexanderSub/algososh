@@ -55,3 +55,25 @@
   grid-column: 1/6;
   justify-content: center;
 }
+
+.circlesWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topCircle {
+  margin-bottom: 8px;
+}
+
+.centralCircle {
+  margin-bottom: 38px;
+}
+
+.bottomCircle {
+
+}
+
+.hidden {
+  visibility: hidden;
+}
