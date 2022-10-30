@@ -59,19 +59,28 @@
 .circlesWrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .topCircle {
   margin-bottom: 8px;
+  margin-left: 12px;
+}
+
+.centralCircleWrapper {
+  display: flex;
 }
 
 .centralCircle {
   margin-bottom: 38px;
 }
 
-.bottomCircle {
+.arrow {
+  margin-top: 30px;
+  margin-left: 16px;
+}
 
+.bottomCircle {
+  margin-left: 12px;
 }
 
 .hidden {

@@ -88,7 +88,7 @@ export const QueuePage: React.FC = () => {
               index={index}
               state={index === count ? ElementStates.Changing : ElementStates.Default}
               head={item && index === head ? "head" : ""}
-              tail={item === (tail).toString() ? "tail" : ""}
+              tail={item && queue.getTail() > 7 ? index === (queue.getTail() - 8) ? "tail" : "" : index === (queue.getTail() - 1) ? "tail" : ""}
             />
           )}
         </div>
