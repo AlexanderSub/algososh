@@ -9,3 +9,21 @@ export type TArrayNumber = {
   value: number;
   state: ElementStates;  
 }
+
+export type TListState<T> = {
+  circle: T;
+  smallCircle: T;
+  state: ElementStates;
+  addProgress: boolean;
+  deleteProgress: boolean;
+}
+
+export enum Direction {
+  Ascending = "ascending",
+  Descending = "descending",
+}
+
+export enum SortType {
+  Select = 'select',
+  Bubble = 'bubble'
+}

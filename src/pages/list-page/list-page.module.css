@@ -1,0 +1,88 @@
+.wrapper {
+  width: 1065px;
+  display: grid;
+  margin: 0 auto;
+  gap: 12px;
+
+}
+
+.inputValue {
+  grid-row: 1/2;
+  grid-column: 1/2;
+}
+
+.inputIndex {
+  grid-row: 2/3;
+  grid-column: 1/2;
+}
+
+.buttonAddToHead {
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+
+.buttonAddToTail {
+  grid-row: 1/2;
+  grid-column: 3/4;
+}
+
+.buttonDeleteFromHead {
+  grid-row: 1/2;
+  grid-column: 4/5;
+}
+
+.buttonDeleteFromTail {
+  grid-row: 1/2;
+  grid-column: 5/6;
+}
+
+.buttonAddByIndex {
+  grid-row: 2/3;
+  grid-column: 2/4;
+}
+
+.buttonDeleteByIndex {
+  grid-row: 2/3;
+  grid-column: 4/6;
+}
+
+.output {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+  grid-row: 3/4;
+  grid-column: 1/6;
+  justify-content: center;
+}
+
+.circlesWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.topCircle {
+  margin-bottom: 8px;
+  margin-left: 12px;
+}
+
+.centralCircleWrapper {
+  display: flex;
+}
+
+.centralCircle {
+  margin-bottom: 38px;
+}
+
+.arrow {
+  margin-top: 30px;
+  margin-left: 16px;
+}
+
+.bottomCircle {
+  margin-left: 12px;
+}
+
+.hidden {
+  visibility: hidden;
+}
