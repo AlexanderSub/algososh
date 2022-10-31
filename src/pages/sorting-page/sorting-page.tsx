@@ -42,7 +42,7 @@ const bubbleSort = async (arr: TArrayNumber[], direction: Direction) => {
       arr[j + 1].state = ElementStates.Changing
       setArray([...arr])
       await delay(SHORT_DELAY_IN_MS)
-      if ((direction === 'ascending' && arr[j].value > arr[j + 1].value) || (direction === 'descending' && arr[j].value < arr[j + 1].value)) {
+      if ((direction === Direction.Ascending && arr[j].value > arr[j + 1].value) || (direction === Direction.Descending && arr[j].value < arr[j + 1].value)) {
         swap(arr, j, j + 1)
       }
       arr[j].state = ElementStates.Default
@@ -65,7 +65,7 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
       arr[j].state = ElementStates.Changing
       setArray([...arr])
       await delay(SHORT_DELAY_IN_MS)
-      if ((direction === 'descending' && arr[j].value > arr[maxInd].value) || (direction === 'ascending' && arr[j].value < arr[maxInd].value)) {
+      if ((direction === Direction.Descending && arr[j].value > arr[maxInd].value) || (direction === Direction.Ascending && arr[j].value < arr[maxInd].value)) {
         maxInd = j
       }
       arr[j].state = ElementStates.Default

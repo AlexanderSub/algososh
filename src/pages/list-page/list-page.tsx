@@ -31,8 +31,8 @@ export const ListPage: React.FC = () => {
 
   const [list] = useState(new LinkedList(initialArray))
   const [listState, setListState] = useState<TListState<typeof input>[]>(initialState)
-  const [input, setInput] = useState<string>('')
-  const [index, setIndex] = useState<number>(0)
+  const [input, setInput] = useState('')
+  const [index, setIndex] = useState(0)
   const [addToHeadLoading, setAddToHeadLoading] = useState(false)
   const [addToTailLoading, setAddToTailLoading] = useState(false)
   const [deleteFromHeadLoading, setDeleteFromHeadLoading] = useState(false)
