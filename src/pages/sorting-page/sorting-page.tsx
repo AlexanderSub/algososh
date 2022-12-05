@@ -3,11 +3,10 @@ import { Button } from "../../components/ui/button/button";
 import { Column } from "../../components/ui/column/column";
 import { RadioInput } from "../../components/ui/radio-input/radio-input";
 import { SolutionLayout } from '../../components/ui/solution-layout/solution-layout';
-import { delay, swap } from "../../components/utils/utils";
-import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { Direction, SortType, TArrayNumber } from "../../types/types";
 import PagesStyles from '../pages.module.css'
+import { bubbleSort, selectionSort } from "./sorting";
 
 export const SortingPage: React.FC = () => {
   const [sortType, setSortType] = useState<SortType>(SortType.Select)
@@ -31,58 +30,27 @@ export const SortingPage: React.FC = () => {
     setArray([...arr]);
   };
 
-// Сортировка пузырьком
-const bubbleSort = async (arr: TArrayNumber[], direction: Direction) => {
-  setLoading(true)
+  const handleBubbleSort = (arr: TArrayNumber[], direction: Direction) => {
+    setLoading(true)
 
-  const { length } = arr
-  for (let i = 0; i < length; i++) {
-    for (let j = 0; j < length - i - 1; j++) {
-      arr[j].state = ElementStates.Changing
-      arr[j + 1].state = ElementStates.Changing
-      setArray([...arr])
-      await delay(SHORT_DELAY_IN_MS)
-      if ((direction === Direction.Ascending && arr[j].value > arr[j + 1].value) || (direction === Direction.Descending && arr[j].value < arr[j + 1].value)) {
-        swap(arr, j, j + 1)
-      }
-      arr[j].state = ElementStates.Default
-    }
-    arr[arr.length - i - 1].state = ElementStates.Modified
+    bubbleSort(arr, direction, setArray)
+
+    setLoading(false)
+    setSortDirection(undefined)
   }
-  setLoading(false)
-  setSortDirection(undefined)
-}
 
-// Сортировка выбором
-const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
-  setLoading(true)
-  
-  const { length } = arr
-  for (let i = 0; i < length - 1; i++) {
-    let maxInd = i;
-    for (let j = i + 1; j < length; j++) {
-      arr[i].state = ElementStates.Changing
-      arr[j].state = ElementStates.Changing
-      setArray([...arr])
-      await delay(SHORT_DELAY_IN_MS)
-      if ((direction === Direction.Descending && arr[j].value > arr[maxInd].value) || (direction === Direction.Ascending && arr[j].value < arr[maxInd].value)) {
-        maxInd = j
-      }
-      arr[j].state = ElementStates.Default
-      setArray([...arr])
-    }
-    swap(arr, i, maxInd)
-    arr[i].state = ElementStates.Modified
+  const handleSelectionSort = (arr: TArrayNumber[], direction: Direction) => {
+    setLoading(true)
+
+    selectionSort(arr, direction, setArray)
+
+    setLoading(false)
+    setSortDirection(undefined)
   }
-  arr[arr.length - 1].state = ElementStates.Modified
-
-  setLoading(false)
-  setSortDirection(undefined)
-};
 
   const handleClick = (direction: Direction) => {
     setSortDirection(direction)
-    sortType === SortType.Bubble ? bubbleSort(array, direction) : selectionSort(array, direction)
+    sortType === SortType.Bubble ? handleBubbleSort(array, direction) : handleSelectionSort(array, direction)
   }
 
   return (
