@@ -95,12 +95,14 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
               disabled={loading}
               checked={sortType === SortType.Select}
               onChange={() => setSortType(SortType.Select)}
+              data-testid='select'
             />
             <RadioInput 
               label="Пузырёк"
               disabled={loading}
               checked={sortType === SortType.Bubble}
               onChange={() => setSortType(SortType.Bubble)}
+              data-testid='bubble'
             />
           </div>
           <Button
@@ -109,7 +111,8 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
             text='По возрастанию'
             isLoader={sortDirection === Direction.Ascending && loading}
             disabled={sortDirection !== Direction.Ascending && loading}
-            onClick={() => handleClick(Direction.Ascending)} 
+            onClick={() => handleClick(Direction.Ascending)}
+            data-testid='ascending'
           />
           <Button
             type='submit'
@@ -117,7 +120,8 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
             text='По убыванию'
             isLoader={sortDirection === Direction.Descending && loading}
             disabled={sortDirection !== Direction.Descending && loading}
-            onClick={() => handleClick(Direction.Descending)} 
+            onClick={() => handleClick(Direction.Descending)}
+            data-testid='descending'
           />
           <Button
             type='submit'
@@ -128,7 +132,7 @@ const selectionSort = async (arr: TArrayNumber[], direction: Direction) => {
           />
         </div>
       
-        <div className={PagesStyles.output}>
+        <div className={PagesStyles.output} data-testid='output'>
           { array.map((item, index) => {
               return (
                 <Column 

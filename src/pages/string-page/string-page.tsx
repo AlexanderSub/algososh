@@ -67,6 +67,7 @@ export const StringPage: React.FC = () => {
             disabled={loading}
             isLimitText={true}
             extraClass={PagesStyles.inputWidth}
+            data-testid='input'
           />
           <Button
             type='submit'
@@ -74,9 +75,10 @@ export const StringPage: React.FC = () => {
             isLoader={loading}
             disabled={!inputValue}
             onClick={handleSubmit} 
+            data-testid='button'
           />
         </div>
-        <div className={PagesStyles.output}>
+        <div className={PagesStyles.output} data-testid='output'>
           {
             string.map((letter, index) => {
               return (
