@@ -32,7 +32,7 @@ export const ListPage: React.FC = () => {
   const [list] = useState(new LinkedList(initialArray))
   const [listState, setListState] = useState<TListState<typeof input>[]>(initialState)
   const [input, setInput] = useState('')
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState('')
   const [addToHeadLoading, setAddToHeadLoading] = useState(false)
   const [addToTailLoading, setAddToTailLoading] = useState(false)
   const [deleteFromHeadLoading, setDeleteFromHeadLoading] = useState(false)
@@ -47,8 +47,8 @@ export const ListPage: React.FC = () => {
   }
 
   const enterIndex = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = + e.target.value
-    setIndex(value)
+    // const value = + e.target.value
+    setIndex(e.target.value)
   }
 
   const addToHead = async (element: string) => {
@@ -190,7 +190,7 @@ export const ListPage: React.FC = () => {
           }
           list.deleteByIndex(index)
           setListState([...listState])
-          setIndex(0)
+          setIndex('')
           setDeleteByIndexLoading(false)
         }, DELAY_IN_MS)
         clearInterval(timer)
@@ -250,15 +250,15 @@ export const ListPage: React.FC = () => {
         />
         <Button 
           text="Добавить по индексу"
-          onClick={() => addByIndex(input, index)}
-          disabled={!input || index < 0 || somethingIsLoading || list.getSize() < index + 1}
+          onClick={() => addByIndex(input, parseInt(index))}
+          disabled={!input || parseInt(index) < 0 || somethingIsLoading || list.getSize() < parseInt(index) + 1}
           isLoader={addByIndexLoading}
           extraClass={ListPageStyles.buttonAddByIndex}
         />
         <Button 
           text="Удалить по индексу"
-          onClick={() => deleteByIndex(index)}
-          disabled={index < 0 || somethingIsLoading || list.getSize() < index + 1}
+          onClick={() => deleteByIndex(parseInt(index))}
+          disabled={parseInt(index) < 0 || somethingIsLoading || list.getSize() < parseInt(index) + 1}
           isLoader={deleteByIndexLoading}
           extraClass={ListPageStyles.buttonDeleteByIndex}
         />
